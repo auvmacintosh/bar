@@ -2,4 +2,3 @@
  tput cup 0,0
   $COLUMNS $
   stty
-  echo "${CURPOS}" 
