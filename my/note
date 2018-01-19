@@ -1,4 +1,0 @@
- echo -e "\e[30H"
- tput cup 0,0
-  $COLUMNS $
-  stty
