@@ -37,13 +37,13 @@ afterBarLen=`echo ${#afterBar}`
 # get bar
 barMaxLen=$(($width-$beforeBarLen-$afterBarLen-2))
 barLen=$(( barMaxLen < 40 ? barMaxLen : 40 ))
-doneLen=`echo "($barLen*$2+0.5)/1" | bc`
+finishLen=`echo "($barLen*$2+0.5)/1" | bc`
 leftLen=`echo "($barLen*(1-$2)+0.5)/1" | bc`
-done=`head -c $doneLen /dev/zero |tr '\0' '#'`
+finish=`head -c $finishLen /dev/zero |tr '\0' '='`
 left=`head -c $leftLen /dev/zero |tr '\0' ' '`
 
 # print the bar
-echo "$beforeBar""$done""$left""$afterBar"
+echo "$beforeBar""$finish""$left""$afterBar"
 
 
 
