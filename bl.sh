@@ -62,6 +62,34 @@ function __printBarLine() {
 	_barLineLen=`echo ${#__barLine}`
 }
 
+function __printBarLineS() {
+	local __title=$1
+	local __progress=$2
+	local __index=0
+	local __found=0
+	for __titleEle in "${_titleArray[@]}"
+	do
+	    if [[ "$__title" == "$__titleEle" ]] ; then
+	        _progressArray[$__index]=__progress
+			__found=1
+	    fi
+		__printBarLine ${__titleEle} ${_progressArray[$__index]} ${_startTimeArray[$__index]}
+		__index=$__index+1
+		_barLinesNo=$__index
+	done
+	if [[ $__found -eq 0 ]]; then
+		_titleArray[$__index]=$_title
+		_progressArray[$__index]=$__progress
+		if [[ $__progress -eq 0 ]]; then
+			_startTimeArray[$__index]=$SECONDS
+		else
+			_startTimeArray[$__index]=0
+		fi
+		__printBarLine ${__titleArray[$__index]} ${_progressArray[$__index]} ${_startTimeArray[$__index]}
+		_barLinesNo=$(( $__index+1 ))
+	fi
+}
+
 function __printLog() {
 	echo $1
 }
@@ -76,13 +104,15 @@ _barPattern1d=".* DEBUG: \S+ 1\.0+$"
 _barPattern1=".* DEBUG: \S+ 1$"
 _barLinesNo=0
 _barLineLen=0
+_titleArray=()
+_progressArray=()
+_startTimeArray=()
 
 while ifs= read -r _line
 do
 	if `echo "$_line" | egrep "$_barPattern0d" >/dev/null 2>&1` || `echo "$_line" | egrep "$_barPattern0" >/dev/null 2>&1` || `echo "$_line" | egrep "$_barPattern1d" >/dev/null 2>&1` || `echo "$_line" | egrep "$_barPattern1" >/dev/null 2>&1`; then
 		__returnFirstBarLine $_barLinesNo $_barLineLen
-		__printBarLine title 0.1 0
-		_barLinesNo=1
+		__printBarLineS title 0.1
 	else
 		__returnFirstBarLine $_barLinesNo $_barLineLen
 		__printLog "$_line"
