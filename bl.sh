@@ -107,23 +107,25 @@ printOldBarLineS() {
 	done
 }
 
-# better without "function". Could be more portable. 
-# function内部会不会修改全局变量取决于fun是不是在当前进程执行的，如果在子进程就不会影响全局变量。
-# 如果fun|tee或者fun|grep这种pipe了，会隐含地在子进程中运行，这种bug非常隐蔽。
-# 返回值用$?查看，但只能查看一次，只要运行了下一个命令就变了，如果需要查看多次请赋值给变量。
-
 # 当log不包含barPattern的时候，打印log，高亮或者过滤。
 printLog() {
 	local line=$1
-	echo -e "$(echo "$line" | sed "s/WARN/\\\\e[33mWARN\\\\e[0m/g" | sed "s/ERROR/\\\\e[31mERROR\\\\e[0m/g")"
+	echo -e "$(echo "$line" | sed "s/warn/\\\\e[33mWARN\\\\e[0m/ig" | sed "s/error/\\\\e[31mERROR\\\\e[0m/ig")"
 }
 
 # 当log包含DEBUG: task 0.2这样的Pattern时，不打印这句log，而是在最下边画一个进程条。
 bl() {
-	barPattern0d=".* DEBUG: \S+ 0\.[0-9]+$"
-	barPattern0=".* DEBUG: \S+ 0$"
-	barPattern1d=".* DEBUG: \S+ 1\.0+$"
-	barPattern1=".* DEBUG: \S+ 1$"
+	# 当log包含task 0.2这样的Pattern时，不打印这句log，而是在最下边画一个进程条。
+	# System.out.println(task1 + " " + (float) i/count);
+	barPattern0d="^\S+ 0\.[0-9]+$"
+	barPattern0="^\S+ 0$"
+	barPattern1d="^\S+ 1\.0+$"
+	barPattern1="^\S+ 1$"
+	# 当log包含DEBUG: task 0.2这样的Pattern时，不打印这句log，而是在最下边画一个进程条。
+	#barPattern0d=".* DEBUG: \S+ 0\.[0-9]+$"
+	#barPattern0=".* DEBUG: \S+ 0$"
+	#barPattern1d=".* DEBUG: \S+ 1\.0+$"
+	#barPattern1=".* DEBUG: \S+ 1$"
 	barLinesNo=0
 	barLineLen=0
 	declare -a titleArray progressArray startTimeArray
