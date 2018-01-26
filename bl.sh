@@ -39,7 +39,7 @@ printBarLine() {
 	if [[ $progress == 0?([.])*([0]) ]]; then # 允许0，0.0，0.0000这类格式
 		local estiTimeHuman="-" # 允许完成度为0，为了避免除0的情况发生，执行这个分支
 	else
-		local estiTime=$(echo "$elapsedTime/$progress" | bc) 
+		local estiTime=$(echo "$elapsedTime/$progress-$elapsedTime" | bc) 
 		local estiTimeHuman="$(humanDuration $estiTime)"
 	fi
 	local elapsedTimeHuman="$(humanDuration $elapsedTime)"
